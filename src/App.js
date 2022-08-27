@@ -12,9 +12,10 @@ const App: () => Node = () => {
 
   return (
     <ThemeContext.Provider value={theme}>
-      <StatusBar barStyle="light-content" />
-
-      <Chat content={chat} />
+      <View style={styles.content}>
+        <StatusBar barStyle="light-content" />
+        <Chat content={chat} />
+      </View>
     </ThemeContext.Provider>
   );
 };

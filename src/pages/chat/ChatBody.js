@@ -1,26 +1,46 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ImageBackground,
   KeyboardAvoidingView,
   SafeAreaView,
   StyleSheet,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import Background from '../../assets/chat-bg.png';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Entypo from 'react-native-vector-icons/Entypo';
+import ChatMessages from './ChatMessages';
 
 export default function ChatBody({content}) {
-  const [text, onChangeText] = React.useState(' ');
+  const [text, onChangeText] = useState('');
+  const [messages, setMessages] = useState([]);
+
+  const onSend = async () => {
+    setMessages([...messages, {sender: 'me', text}]);
+    onChangeText('');
+  };
+
+  useEffect(() => {
+    if (messages.at(-1)?.sender === 'me') {
+      setTimeout(() => {
+        setMessages([...messages, {sender: 'contact', text: 'oieoieoie'}]);
+      }, 1000);
+    }
+  }, [messages]);
 
   return (
-    <KeyboardAvoidingView style={styles.content} behavior="height">
+    <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
       <ImageBackground
         source={Background}
         resizeMode="cover"
         style={styles.content}>
+        <View style={styles.messages}>
+          <ChatMessages messages={messages} />
+        </View>
+
         <SafeAreaView style={styles.inputBar}>
           <View style={styles.inputWrapper}>
             <View style={styles.inputWrapperMessage}>
@@ -30,6 +50,7 @@ export default function ChatBody({content}) {
                 style={styles.input}
                 onChangeText={onChangeText}
                 value={text}
+                onSubmitEditing={onSend}
               />
             </View>
             <View style={styles.inputWrapperButtons}>
@@ -37,9 +58,13 @@ export default function ChatBody({content}) {
               <Entypo style={styles.inputWrapperIcon} name="camera" />
             </View>
           </View>
-          <View style={styles.inputButton}>
-            <MaterialIcons style={styles.inputButtonIcon} name="mic" />
-          </View>
+          <TouchableOpacity style={styles.inputButton} onPress={onSend}>
+            {text === '' ? (
+              <MaterialIcons style={styles.inputButtonIcon} name="mic" />
+            ) : (
+              <MaterialIcons style={styles.inputButtonIcon} name="send" />
+            )}
+          </TouchableOpacity>
         </SafeAreaView>
       </ImageBackground>
     </KeyboardAvoidingView>
@@ -47,15 +72,21 @@ export default function ChatBody({content}) {
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+  },
   content: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  messages: {
     flex: 1,
   },
   inputBar: {
     margin: 5,
     flexDirection: 'row',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 0,
   },
   inputWrapper: {
     flex: 1,

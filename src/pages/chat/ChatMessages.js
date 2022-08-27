@@ -13,6 +13,7 @@ export default function ChatMessages({messages}) {
       }>
       {messages.map(message => (
         <View
+          key={message.text + message.sender}
           style={[
             styles.message,
             message.sender === 'me' ? styles.myMessage : styles.contactMessage,

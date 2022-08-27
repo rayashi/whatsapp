@@ -16,20 +16,26 @@ import ChatMessages from './ChatMessages';
 
 export default function ChatBody({content}) {
   const [text, onChangeText] = useState('');
+  const [answerIndex, setAnswerIndex] = useState(0);
   const [messages, setMessages] = useState([]);
 
   const onSend = async () => {
-    setMessages([...messages, {sender: 'me', text}]);
-    onChangeText('');
+    if (text) {
+      setMessages([...messages, {sender: 'me', text}]);
+      onChangeText('');
+    }
   };
 
   useEffect(() => {
     if (messages.at(-1)?.sender === 'me') {
       setTimeout(() => {
-        setMessages([...messages, {sender: 'contact', text: 'oieoieoie'}]);
+        const mockMessage = content.answers[answerIndex];
+        setMessages([...messages, {sender: 'contact', ...mockMessage}]);
+        setAnswerIndex(answerIndex + 1);
       }, 1000);
     }
-  }, [messages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, content]);
 
   return (
     <KeyboardAvoidingView style={styles.wrapper} behavior="padding">
